@@ -340,12 +340,13 @@
                                     </div>
                                 </div>
                                 <!-- // Modal -->
+                                <?php include('./php-pages/tablas.php'); ?>
                                 <!-- Jquery JS file -->
                                 <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
                                 <!-- Bootstrap JS file -->
                                 <!-- Custom JS file -->
                                 <script type="text/javascript" src="js/script.js"></script>
-                                <script type="text/javascript" scr="../crud-bus/js/script.js"></script>
+                                <script type="text/javascript" scr="./crud-bus/js/script.js"></script>
                                 <!-- Fin crud jquery-->
 
 
