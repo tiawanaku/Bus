@@ -20,8 +20,7 @@ $search = $userid;
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
@@ -117,23 +116,23 @@ $search = $userid;
                                             </div>
                                             <div class="modal-body">
                                                 <div class="form-group">
-                                                    <label for="id_alumno">Id Alumno</label>
-                                                    <input type="text" id="idalumno" value="" class="form-control" />
+                                                    <label for="num_placa">Numero de Placa</label>
+                                                    <input type="text" id="num_placa" value="" class="form-control" />
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="Cod ALumno">Cod. Alumno</label>
-                                                    <input type="text" id="codalumno" value="" class="form-control" />
+                                                    <label for="num_bus">Numero de Bus</label>
+                                                    <input type="text" id="num_bus" value="" class="form-control" />
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="CodMatri">Cod. Matri</label>
-                                                    <input type="text" id="codmatri" class="form-control" value="" />
+                                                    <label for="num_chasis">Numero de Chasis</label>
+                                                    <input type="text" id="num_chasis" class="form-control" value="" />
                                                 </div>
-                                                <div class="form-group">
+                                                 <!-- <div class="form-group">
                                                     <label for="Observacion">Observacion</label>
                                                     <textarea style="text-transform:uppercase" id="obs"
                                                         class="form-control"></textarea>
-                                                    <!--<input type="text" id="obs" class="form-control"/>-->
-                                                </div>
+                                                    <input type="text" id="obs" class="form-control"/>
+                                                </div> -->
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default"
@@ -189,13 +188,7 @@ $search = $userid;
                                     </div>
                                 </div>
                                 <!-- // Modal -->
-                                
-                                <!-- Jquery JS file -->
-                                <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
-                                <!-- Bootstrap JS file -->
-                                <!-- Custom JS file -->
-                                <script type="text/javascript" src="js/script.js"></script>
-                                <script type="text/javascript" scr="./crud-bus/js/script.js"></script>
+
                                 <!-- Fin crud jquery-->
 
                                 <!-- Fin Contenido -->
@@ -246,6 +239,68 @@ $search = $userid;
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 
-</body>
+    <!-- Custom JS file for CRUD operations -->
+    <script>
+    $(document).ready(function(){
+        function addRecord(){
+            var num_placa = $("#num_placa").val();
+            var num_bus = $("#num_bus").val();
+            var num_chasis = $("#num_chasis").val();
+            
+            $.ajax({
+                url: 'ajax.php',
+                type: 'post',
+                data: {
+                    'save': 1,
+                    'num_placa': num_placa,
+                    'num_bus': num_bus,
+                    'num_chasis': num_chasis,
+                },
+                success: function(response){
+                    $("#records_content").html(response);
+                    $("#add_new_record_modal").modal('hide');
+                    $("#form")[0].reset();
+                }
+            });
+        }
 
+        function deleteRecord(id){
+            var conf = confirm("¿Estás seguro de eliminar este registro?");
+            if(conf == true){
+                $.ajax({
+                    url: 'ajax.php',
+                    type: 'post',
+                    data: {
+                        'delete': 1,
+                        'id': id,
+                    },
+                    success: function(response){
+                        $("#records_content").html(response);
+                    }
+                });
+            }
+        }
+
+        function getRecords(){
+            $.ajax({
+                url: 'ajax.php',
+                type: 'get',
+                data: {
+                    'getRecords': 1
+                },
+                success: function(response){
+                    $("#records_content").html(response);
+                }
+            });
+        }
+
+        $(document).on('click', '.delete', function(){
+            var id = $(this).attr('data-id');
+            deleteRecord(id);
+        });
+
+        getRecords();
+    });
+</script>
+</body>
 </html>
