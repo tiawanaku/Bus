@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "busmunicipal";
+$dbname = "busrecaudo";
 
 // Crear conexión
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -19,17 +19,21 @@ $ci_usuario = $_POST['ci_usuario'];
 $nombre = $_POST['nombre'];
 $ape_paterno = $_POST['ape_paterno'];
 $ape_materno = $_POST['ape_materno'];
-// $password = $_POST['password'];
 $tipo_tarjeta = $_POST['tipo_tarjeta'];
 $saldo = $_POST['saldo'];
 
-// Preparar y ejecutar la consulta SQL
-$sql = "INSERT INTO tarjetas_validas (uid, ci_usuario, nombre, ape_paterno, ape_materno, password, tipo_tarjeta, saldo)
-        VALUES ('$uid', '$ci_usuario', '$nombre', '$ape_paterno', '$ape_materno', '$tipo_tarjeta', '$saldo')";
+// Preparar y ejecutar la consulta SQL para insertar
+$sql_insert = "INSERT INTO tarjetas_validas (uid, ci_usuario, nombre, ape_paterno, ape_materno, tipo_tarjeta, saldo)
+               VALUES ('$uid', '$ci_usuario', '$nombre', '$ape_paterno', '$ape_materno', '$tipo_tarjeta', '$saldo')";
 
-if ($conn->query($sql) === TRUE) {
-    // Mostrar mensaje de éxito
-    echo '<!DOCTYPE html>
+if ($conn->query($sql_insert) === TRUE) {
+    // Preparar y ejecutar la consulta SQL para eliminar el último registro en 'master'
+    $sql_delete = "DELETE FROM master
+                   WHERE uid = (SELECT uid FROM master ORDER BY id DESC LIMIT 1)";
+    
+    if ($conn->query($sql_delete) === TRUE) {
+        // Mostrar mensaje de éxito
+        echo '<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -62,10 +66,14 @@ if ($conn->query($sql) === TRUE) {
     </script>
 </body>
 </html>';
+    } else {
+        echo "Error al eliminar el último registro: " . $conn->error;
+    }
 } else {
-    echo "Error: " . $sql . "<br>" . $conn->error;
+    echo "Error al insertar el registro: " . $conn->error;
 }
 
 // Cerrar la conexión
 $conn->close();
 ?>
+
