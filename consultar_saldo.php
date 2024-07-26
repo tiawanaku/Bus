@@ -1,31 +1,3 @@
-<?php
-include ('php-includes/conexion.php');
-include ('php-includes/check-login.php');
-$userid = $_SESSION['userid'];
-
-// Obtener la fecha actual
-$currentDate = date('Y-m-d');
-
-// Consulta SQL para contar boletos de la fecha actual
-$query = "SELECT uid FROM boletos_validos WHERE fecha LIKE '$currentDate%'";
-
-// Ejecutar la consulta
-$result = mysqli_query($con, $query);
-
-// Contar los boletos
-$totalBoletos = mysqli_num_rows($result);
-
-// Consulta SQL para contar boletos regulares y preferenciales
-$regularesQuery = "SELECT COUNT(*) AS count FROM boletos_validos WHERE uid LIKE '469471A594880' AND fecha LIKE '$currentDate%'";
-$preferencialesQuery = "SELECT COUNT(*) AS count FROM boletos_validos WHERE uid LIKE 'A2151F51' AND fecha LIKE '$currentDate%'";
-
-$regularesResult = mysqli_query($con, $regularesQuery);
-$preferencialesResult = mysqli_query($con, $preferencialesQuery);
-
-$regularesCount = mysqli_fetch_assoc($regularesResult)['count'];
-$preferencialesCount = mysqli_fetch_assoc($preferencialesResult)['count'];
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,9 +10,7 @@ $preferencialesCount = mysqli_fetch_assoc($preferencialesResult)['count'];
     <title>Sistema Bus Municipal - Bus</title>
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 </head>
@@ -64,8 +34,7 @@ $preferencialesCount = mysqli_fetch_assoc($preferencialesResult)['count'];
                     <ul class="navbar-nav ml-auto">
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Administrador</span>
                                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
@@ -90,13 +59,13 @@ $preferencialesCount = mysqli_fetch_assoc($preferencialesResult)['count'];
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="fecha_actual">Fecha Actual</label>
-                                            <input type="text" id="fecha_actual" class="form-control" value="<?php echo $currentDate; ?>" readonly />
+                                            <input type="text" id="fecha_actual" class="form-control" readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="total_boletos">Total Boletos</label>
-                                            <input type="text" id="total_boletos" class="form-control" value="<?php echo $totalBoletos; ?>" readonly />
+                                            <input type="text" id="total_boletos" class="form-control" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -104,13 +73,13 @@ $preferencialesCount = mysqli_fetch_assoc($preferencialesResult)['count'];
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="boletos_regulares">Boletos Regulares</label>
-                                            <input type="text" id="boletos_regulares" class="form-control" value="<?php echo $regularesCount; ?>" readonly />
+                                            <input type="text" id="boletos_regulares" class="form-control" readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="boletos_preferenciales">Boletos Preferenciales</label>
-                                            <input type="text" id="boletos_preferenciales" class="form-control" value="<?php echo $preferencialesCount; ?>" readonly />
+                                            <input type="text" id="boletos_preferenciales" class="form-control" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -151,6 +120,32 @@ $preferencialesCount = mysqli_fetch_assoc($preferencialesResult)['count'];
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
+    
+    <!-- Custom script to update ticket counts -->
+    <script>
+        function fetchTicketCounts() {
+            $.ajax({
+                url: 'get_ticket_counts.php',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#fecha_actual').val(data.currentDate);
+                    $('#total_boletos').val(data.totalBoletos);
+                    $('#boletos_regulares').val(data.regularesCount);
+                    $('#boletos_preferenciales').val(data.preferencialesCount);
+                }
+            });
+        }
+
+        // Fetch data every 10 seconds
+        setInterval(fetchTicketCounts, 10000);
+
+        // Fetch data on page load
+        $(document).ready(function() {
+            fetchTicketCounts();
+        });
+    </script>
 </body>
 
 </html>
+
