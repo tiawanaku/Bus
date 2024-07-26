@@ -37,7 +37,7 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Tarjetas:</h6>
             <a class="collapse-item" href="vender_tarjeta.php">Vender tarjeta</a>
-            <a class="collapse-item" href="consultar_saldo.php">Consultar Saldo</a>
+            <a class="collapse-item" href="consultar_saldo.php">Contador Boletos</a>
         </div>
     </div>
 </li>
